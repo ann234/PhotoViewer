@@ -1,0 +1,142 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.0'
+
+    //  Hilt
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    namespace 'com.jhoonpark.app.photoviewer'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.jhoonpark.app.photoviewer"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.jhoonpark.app.photoviewer.CustomTestRunner"
+    }
+
+    buildscript {
+        ext.kotlin_version = '1.9.0'
+        repositories {
+            mavenCentral()
+        }
+
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("keystore")
+            keyAlias "jhoonPark"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+    buildFeatures {
+        viewBinding true
+        dataBinding = true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+    }
+    testOptions {
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.0'
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
+
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.1'
+
+    // Coroutines
+    def coroutines_version = '1.7.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$coroutines_version"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    //  OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+
+    //  Hilt
+    def hilt_version = '2.47'
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    //  ...for testing
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    //  ...for android testing
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    //  Test
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.1.0"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1"
+    //  Android test
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
+    //  ..for mocking
+    def mockkVersion = "1.13.7"
+    androidTestImplementation "io.mockk:mockk-android:${mockkVersion}"
+    androidTestImplementation "io.mockk:mockk-agent:${mockkVersion}"
+    androidTestImplementation "io.mockk:mockk-agent-jvm:${mockkVersion}"
+    //  ..for espresso
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1"
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes true
+}
