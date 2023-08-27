@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,8 +49,8 @@ class MainViewModel @Inject constructor(
     suspend fun updatePhotoList() {
         if(mainState == MainState.IDLE) {
             mainState = MainState.READING
-            try {
-                updatePhotoListJob = viewModelScope.launch {
+            updatePhotoListJob = viewModelScope.launch {
+                try {
                     photoRepository.getPhotosList()
                         .onSuccess { newPhotoList ->
                             val oldList = _photoList.value ?: emptyList()
@@ -61,9 +62,9 @@ class MainViewModel @Inject constructor(
                             _errorMessage.value = "데이터를 불러오는데 실패했습니다! 다시 시도해주세요."
                             Log.e(TAG, "Failed to fetch data: $it")
                         }
+                } finally {
+                    mainState = MainState.IDLE
                 }
-            } finally {
-                mainState = MainState.IDLE
             }
         }
     }
